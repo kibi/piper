@@ -1,7 +1,7 @@
 version: "3"
 services:
   rabbit:
-    image: bvrs/rabbitmq-piper:3.7.7
+    image: bvrs/rabbitmq-piper:3.7.28
     ports:
       - 15672:15672
       - 5672:5672
