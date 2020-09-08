@@ -45,6 +45,29 @@ services:
     networks:
       - backend
 
+  worker:
+    image: bvrs/piper:latest
+    depends_on:
+      - rabbit
+    environment:
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dfile.encoding=UTF-8 -Dfile.io.encoding=UTF-8 -DjavaEncoding=UTF-8
+      - SPRING_PROFILES_ACTIVE=default
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS=always
+      - MANAGEMENT_HEALTH_RABBIT_ENABLED=false
+      - MANAGEMENT_HEALTH_DB_ENABLED=false
+      - SPRING_JACKSON_SERIALIZATION_INDENTOUTPUT=true
+      - PIPER_WORKER_ENABLED=true
+      - PIPER_WORKER_SUBSCRIPTIONS_TASKS=1
+      - PIPER_MESSAGEBROKER_PROVIDER=amqp
+      - SPRING_RABBITMQ_HOST=rabbit
+    volumes:
+      - c:\temp\video:/videos
+    ports:
+      - 8181:8080
+      - 5006:5005
+    networks:
+      - backend
+
 networks:
   backend:
     driver: bridge
