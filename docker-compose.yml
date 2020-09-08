@@ -21,6 +21,9 @@ services:
 
   coordinator:
     image: bvrs/piper:latest
+    depends_on:
+      - rabbit
+      - postgres
     environment:
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -Dfile.encoding=UTF-8 -Dfile.io.encoding=UTF-8 -DjavaEncoding=UTF-8
       - SPRING_PROFILES_ACTIVE=default
