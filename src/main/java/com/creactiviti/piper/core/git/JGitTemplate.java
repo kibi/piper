@@ -15,18 +15,12 @@
  */
 package com.creactiviti.piper.core.git;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.creactiviti.piper.core.pipeline.IdentifiableResource;
+import com.google.common.base.Throwables;
+import com.google.common.io.Files;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.AbbreviatedObjectId;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
@@ -37,9 +31,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.util.Assert;
 
-import com.creactiviti.piper.core.pipeline.IdentifiableResource;
-import com.google.common.base.Throwables;
-import com.google.common.io.Files;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class JGitTemplate implements GitOperations {
 
@@ -60,7 +55,7 @@ public class JGitTemplate implements GitOperations {
     branch = aBranch;
     searchPaths = aSearchPaths;
     username = aUsername;
-    password = aPassword;
+    password = (aPassword == null) ? "" : aPassword;
   }
 
   @Override
@@ -72,7 +67,7 @@ public class JGitTemplate implements GitOperations {
   private List<IdentifiableResource> getHeadFiles (Repository aRepository, String... aSearchPaths) {
     List<String> searchPaths = Arrays.asList(aSearchPaths);
     List<IdentifiableResource> resources = new ArrayList<>();
-    try (ObjectReader reader = aRepository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(aRepository,reader);) {
+    try (ObjectReader reader = aRepository.newObjectReader(); RevWalk walk = new RevWalk(reader); TreeWalk treeWalk = new TreeWalk(aRepository,reader)) {
       final ObjectId id = aRepository.resolve(Constants.HEAD);
       if(id == null) {
         return List.of();
